@@ -34,7 +34,7 @@ class Spider(object):
 
     def loadPage(self, url):
         '''
-        读取页面
+        读取页面内容
         :param url:
         :return:
         '''
