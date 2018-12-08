@@ -1,33 +1,20 @@
-import re
-import urllib.request
+import os
+import urllib
+from lxml import etree
 
-# ------ 获取网页源代码的方法 ---
-def getHtml(url):
-    page = urllib.request.urlopen(url)
-    html = page.read()
-    return html
 
-# ------ getHtml()内输入任意帖子的URL ------
-html = getHtml("http://tieba.baidu.com/p/3205263090")
-# ------ 修改html对象内的字符编码为UTF-8 ------
-html = html.decode('UTF-8')
+class Splider(object):
+    def __init__(self):
+        '''
+        初始化
+        '''
+        self.tieba_name = input('请输入要访问的贴吧:')
+        self.begin_page = input('请输入起始页：')
+        self.end_page = input('请输入终止页:')
 
-# ------ 获取帖子内所有图片地址的方法 ------
-def getImg(html):
-    # ------ 利用正则表达式匹配网页内容找到图片地址 ------
-    reg = r'src="([.*\S]*\.jpg)" pic_ext="jpeg"'
-    imgre = re.compile(reg)
-    imglist = re.findall(imgre, html)
-    return imglist
-
-imgList = getImg(html)
-imgName = 0
-
-for imgPath in imgList:
-    # ------ 这里最好使用异常处理及多线程编程方式 ------
-    f = open("pic/"+str(imgName)+".jpg", 'wb')
-    f.write((urllib.request.urlopen(imgPath)).read())
-    f.close()
-    imgName += 1
-
-print("All Done!")
+        self.url = 'https://tieba.baidu.com/f'
+        self.headers = {
+            "User-Agent": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1 Trident/5.0;"
+        }
+        # 图片编号
+        self.user_name = 1
