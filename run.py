@@ -1,25 +1,33 @@
 import re
 import urllib.request
 
+# ------ 获取网页源代码的方法 ---
+def getHtml(url):
+    page = urllib.request.urlopen(url)
+    html = page.read()
+    return html
 
-# 基本配置
-url = 'https://tieba.baidu.com/p/5968543034'
+# ------ getHtml()内输入任意帖子的URL ------
+html = getHtml("http://tieba.baidu.com/p/3205263090")
+# ------ 修改html对象内的字符编码为UTF-8 ------
+html = html.decode('UTF-8')
 
+# ------ 获取帖子内所有图片地址的方法 ------
+def getImg(html):
+    # ------ 利用正则表达式匹配网页内容找到图片地址 ------
+    reg = r'src="([.*\S]*\.jpg)" pic_ext="jpeg"'
+    imgre = re.compile(reg)
+    imglist = re.findall(imgre, html)
+    return imglist
 
-class Splider(object):
-    def getHtml(url):
-        '''
-        获取网页源码
-        :param url:
-        :return:
-        '''
-        page = urllib.request.urlopen(url)
-        html = page.read()
-        return html
+imgList = getImg(html)
+imgName = 0
 
+for imgPath in imgList:
+    # ------ 这里最好使用异常处理及多线程编程方式 ------
+    f = open("pic/"+str(imgName)+".jpg", 'wb')
+    f.write((urllib.request.urlopen(imgPath)).read())
+    f.close()
+    imgName += 1
 
-
-
-if __name__ == '__main__':
-    splider = Splider()
-    splider.getHtml()
+print("All Done!")
